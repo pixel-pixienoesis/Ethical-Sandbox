@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Dashboard | AI Ethics Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .nav {
+            background: #34495e;
+            padding: 15px 30px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 30px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav a:hover, .nav a.active {
+            background: var(--secondary-color);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            border-left: 5px solid var(--secondary-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .card-metric {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .research-insights {
+            grid-column: 1 / -1;
+            background: #e8f5e8;
+            border-left-color: var(--success-color);
+        }
+
+        .insight-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 3px solid var(--warning-color);
+        }
+
+        .framework-comparison {
+            margin-top: 20px;
+        }
+
+        .framework-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .framework-name {
+            width: 150px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .framework-progress {
+            flex: 1;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .framework-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .framework-value {
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>AI Ethics Research Dashboard</h1>
+            <p>Real-time Analytics & Insights from Ethical Decision Framework</p>
+        </header>
+
+        <nav class="nav">
+            <a href="/">Main Platform</a>
+            <a href="/research_dashboard" class="active">Research Dashboard</a>
+            <a href="/research_data">Raw Data API</a>
+        </nav>
+
+        <div id="loading" style="text-align: center; padding: 50px; color: #666;">
+            Loading research data...
+        </div>
+
+        <div id="dashboard" style="display: none;">
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">Total Decisions</div>
+                        <div class="card-metric" id="totalDecisions">0</div>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="highConfidence">0</div>
+                            <div class="stat-label">High Confidence</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mediumConfidence">0</div>
+                            <div class="stat-label">Medium Confidence</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="lowConfidence">0</div>
+                            <div class="stat-label">Low Confidence</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="uniqueSessions">0</div>
+                            <div class="stat-label">Unique Sessions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">Dilemma Distribution</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="dilemmaChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">Framework Usage Patterns</div>
+                    </div>
+                    <div class="framework-comparison" id="frameworkComparison">
+                        <!-- Framework bars will be populated here -->
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-title">Decision Confidence Trends</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="confidenceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-card research-insights">
+                    <div class="card-header">
+                        <div class="card-title">Key Research Insights</div>
+                    </div>
+                    <div id="researchInsights">
+                        <!-- Insights will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dilemmaChart;
+        let confidenceChart;
+
+        $(document).ready(function() {
+            loadDashboardData();
+            setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
+        });
+
+        function loadDashboardData() {
+            $.ajax({
+                url: '/research_data',
+                method: 'GET',
+                success: function(data) {
+                    updateDashboard(data);
+                    $('#loading').hide();
+                    $('#dashboard').show();
+                },
+                error: function() {
+                    $('#loading').html('Error loading research data. Please try again.');
+                }
+            });
+        }
+
+        function updateDashboard(data) {
+            // Update basic metrics
+            $('#totalDecisions').text(data.total_decisions);
+            $('#uniqueSessions').text(data.unique_sessions);
+            
+            // Update confidence counts
+            const confidenceCounts = {high: 0, medium: 0, low: 0};
+            for (const [confidence, values] of Object.entries(data.average_confidence)) {
+                confidenceCounts[confidence.toLowerCase()] = values.length;
+            }
+            $('#highConfidence').text(confidenceCounts.high);
+            $('#mediumConfidence').text(confidenceCounts.medium);
+            $('#lowConfidence').text(confidenceCounts.low);
+
+            // Update charts
+            updateDilemmaChart(data.dilemma_distribution);
+            updateConfidenceChart(data.average_confidence);
+            updateFrameworkComparison(data.framework_usage);
+            updateResearchInsights(data);
+        }
+
+        function updateDilemmaChart(distribution) {
+            const ctx = document.getElementById('dilemmaChart').getContext('2d');
+            
+            if (dilemmaChart) {
+                dilemmaChart.destroy();
+            }
+
+            dilemmaChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(distribution).map(key => key.replace('_', ' ').toUpperCase()),
+                    datasets: [{
+                        data: Object.values(distribution),
+                        backgroundColor: [
+                            '#3498db',
+                            '#e74c3c',
+                            '#f39c12',
+                            '#27ae60',
+                            '#9b59b6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateConfidenceChart(confidenceData) {
+            const ctx = document.getElementById('confidenceChart').getContext('2d');
+            
+            if (confidenceChart) {
+                confidenceChart.destroy();
+            }
+
+            const labels = Object.keys(confidenceData);
+            const values = Object.values(confidenceData).map(arr => arr.length);
+
+            confidenceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Decision Count',
+                        data: values,
+                        backgroundColor: [
+                            '#27ae60',
+                            '#f39c12', 
+                            '#e74c3c'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateFrameworkComparison(frameworkUsage) {
+            const container = $('#frameworkComparison');
+            container.empty();
+
+            const maxUsage = Math.max(...Object.values(frameworkUsage).map(data => data.average_weight));
+            
+            const colors = {
+                'utilitarianism': '#2E86AB',
+                'deontological': '#A23B72',
+                'virtue_ethics': '#F18F01',
+                'care_ethics': '#C73E1D',
+                'justice': '#6A994E'
+            };
+
+            for (const [framework, data] of Object.entries(frameworkUsage)) {
+                const percentage = (data.average_weight / maxUsage) * 100;
+                const frameworkName = framework.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                const barHtml = `
+                    <div class="framework-bar">
+                        <div class="framework-name">${frameworkName}</div>
+                        <div class="framework-progress">
+                            <div class="framework-fill" style="width: ${percentage}%; background-color: ${colors[framework] || '#3498db'}"></div>
+                        </div>
+                        <div class="framework-value">${(data.average_weight * 100).toFixed(1)}%</div>
+                    </div>
+                `;
+                container.append(barHtml);
+            }
+        }
+
+        function updateResearchInsights(data) {
+            const container = $('#researchInsights');
+            container.empty();
+
+            const insights = [];
+
+            // Generate insights based on data
+            if (data.total_decisions > 50) {
+                const highConfidenceRate = (data.average_confidence.High?.length || 0) / data.total_decisions * 100;
+                insights.push({
+                    title: "Decision Confidence Analysis",
+                    content: `${highConfidenceRate.toFixed(1)}% of decisions reached high confidence levels, indicating strong ethical consensus in the majority of cases.`
+                });
+            }
+
+            // Most popular framework
+            let mostUsedFramework = '';
+            let highestUsage = 0;
+            for (const [framework, data_item] of Object.entries(data.framework_usage)) {
+                if (data_item.average_weight > highestUsage) {
+                    highestUsage = data_item.average_weight;
+                    mostUsedFramework = framework.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+
+            if (mostUsedFramework) {
+                insights.push({
+                    title: "Framework Preference Patterns",
+                    content: `${mostUsedFramework} shows the highest average usage at ${(highestUsage * 100).toFixed(1)}%, suggesting users find this framework most relevant for AI ethical decision-making.`
+                });
+            }
+
+            // Most challenging dilemma
+            let mostPopularDilemma = '';
+            let highestCount = 0;
+            for (const [dilemma, count] of Object.entries(data.dilemma_distribution)) {
+                if (count > highestCount) {
+                    highestCount = count;
+                    mostPopularDilemma = dilemma.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                }
+            }
+
+            if (mostPopularDilemma) {
+                insights.push({
+                    title: "Dilemma Engagement Analysis",
+                    content: `"${mostPopularDilemma}" receives the most attention with ${highestCount} decisions, indicating high relevance in current AI ethics discussions.`
+                });
+            }
+
+            // Render insights
+            insights.forEach(insight => {
+                const insightHtml = `
+                    <div class="insight-item">
+                        <h4>${insight.title}</h4>
+                        <p>${insight.content}</p>
+                    </div>
+                `;
+                container.append(insightHtml);
+            });
+
+            if (insights.length === 0) {
+                container.append('<div class="insight-item"><h4>Collecting Data</h4><p>Not enough data collected yet. Check back after more users interact with the platform.</p></div>');
+            }
+        }
+    </script>
+</body>
+</html>

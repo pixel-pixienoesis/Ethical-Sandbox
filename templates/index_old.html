@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ethical Decision Framework | Research Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .dilemma-section {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .dilemma-selector {
+            margin-bottom: 20px;
+        }
+
+        .dilemma-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .dilemma-content h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .dilemma-content .category {
+            background: var(--secondary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .scenario {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 5px;
+        }
+
+        .stakeholders {
+            margin-top: 20px;
+        }
+
+        .stakeholders h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stakeholder-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .stakeholder {
+            background: var(--warning-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .controls-section {
+            padding: 25px;
+        }
+
+        .framework-controls {
+            margin-bottom: 30px;
+        }
+
+        .framework-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .framework-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .framework-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .framework-name {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .framework-weight {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .framework-description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .slider-container {
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .decision-output {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            border-left: 5px solid var(--success-color);
+        }
+
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .decision-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .confidence-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .confidence-high { background: var(--success-color); color: white; }
+        .confidence-medium { background: var(--warning-color); color: white; }
+        .confidence-low { background: var(--accent-color); color: white; }
+
+        .decision-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .decision-proceed { background: #d5f4e6; color: #27ae60; }
+        .decision-abort { background: #fadbd8; color: #e74c3c; }
+        .decision-deadlock { background: #fef9e7; color: #f39c12; }
+
+        .reasoning {
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .framework-breakdown {
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            background: var(--light-bg);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 3px solid;
+        }
+
+        .breakdown-influence {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-arguments {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 0.95em;
+        }
+
+        .argument-pro {
+            color: var(--success-color);
+        }
+
+        .argument-con {
+            color: var(--accent-color);
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+            position: relative;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .breakdown-arguments {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-note {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .research-note strong {
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>AI Ethical Decision Framework</h1>
+            <p class="subtitle">Advanced Multi-Framework Ethical Analysis for Autonomous Systems</p>
+        </header>
+
+        <div class="research-note">
+            <strong>Research Platform:</strong> This tool demonstrates sophisticated ethical decision-making frameworks for AI systems. 
+            All interactions are anonymized and contribute to advancing AI ethics research.
+        </div>
+        
+        <div class="main-content">
+            <div class="dilemma-section">
+                <div class="dilemma-selector">
+                    <select id="dilemmaSelect" onchange="loadDilemma()">
+                        {% for key, dilemma_data in available_dilemmas.items() %}
+                        <option value="{{ key }}" {% if key == dilemma_key %}selected{% endif %}>
+                            {{ dilemma_data.title }} ({{ dilemma_data.category }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="dilemma-content">
+                    <div class="category">{{ dilemma.category }}</div>
+                    <h2>{{ dilemma.title }}</h2>
+                    <div class="scenario">{{ dilemma.scenario }}</div>
+                    
+                    <div class="stakeholders">
+                        <h4>Key Stakeholders:</h4>
+                        <div class="stakeholder-list">
+                            {% for stakeholder in dilemma.stakeholders %}
+                            <span class="stakeholder">{{ stakeholder }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <div class="framework-controls">
+                    <h3>Ethical Framework Weights</h3>
+                    <p style="margin-bottom: 20px; color: #666;">Adjust the importance of each ethical framework in the decision-making process:</p>
+                    
+                    {% for framework_key, framework_data in frameworks.items() %}
+                    <div class="framework-item" style="border-left: 4px solid {{ framework_data.color }};">
+                        <div class="framework-header">
+                            <span class="framework-name">{{ framework_data.name }}</span>
+                            <span class="framework-weight" id="weight-{{ framework_key }}">{{ "%.1f"|format(weights[framework_key] * 100) }}%</span>
+                        </div>
+                        <div class="framework-description">{{ framework_data.description }}</div>
+                        <div class="slider-container">
+                            <input type="range" 
+                                   class="slider" 
+                                   id="slider-{{ framework_key }}"
+                                   min="0" 
+                                   max="1" 
+                                   step="0.01" 
+                                   value="{{ weights[framework_key] }}"
+                                   onchange="updateAnalysis()"
+                                   style="background: linear-gradient(to right, {{ framework_data.color }} 0%, {{ framework_data.color }} {{ weights[framework_key] * 100 }}%, #ddd {{ weights[framework_key] * 100 }}%, #ddd 100%);">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="frameworkChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="decision-output" id="decisionOutput">
+            <div class="loading">Loading analysis...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentDilemma = '{{ dilemma_key }}';
+        let frameworkChart;
+
+        // Initialize
+        $(document).ready(function() {
+            updateAnalysis();
+            initializeChart();
+        });
+
+        function updateAnalysis() {
+            // Collect weights
+            const weights = {};
+            {% for framework_key in frameworks.keys() %}
+            weights['{{ framework_key }}'] = parseFloat($('#slider-{{ framework_key }}').val());
+            $('#weight-{{ framework_key }}').text((weights['{{ framework_key }}'] * 100).toFixed(1) + '%');
+            updateSliderBackground('{{ framework_key }}', weights['{{ framework_key }}']);
+            {% endfor %}
+
+            // Update chart
+            updateChart(weights);
+
+            // Send AJAX request for analysis
+            $.ajax({
+                url: '/analyze',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    dilemma: currentDilemma,
+                    weights: weights
+                }),
+                success: function(response) {
+                    displayDecision(response.decision_data);
+                },
+                error: function() {
+                    $('#decisionOutput').html('<div class="loading">Error analyzing decision. Please try again.</div>');
+                }
+            });
+        }
+
+        function updateSliderBackground(framework, value) {
+            const color = getFrameworkColor(framework);
+            const percentage = value * 100;
+            const slider = document.getElementById(`slider-${framework}`);
+            slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, #ddd ${percentage}%, #ddd 100%)`;
+        }
+
+        function getFrameworkColor(framework) {
+            const colors = {
+                {% for framework_key, framework_data in frameworks.items() %}
+                '{{ framework_key }}': '{{ framework_data.color }}',
+                {% endfor %}
+            };
+            return colors[framework] || '#3498db';
+        }
+
+        function displayDecision(data) {
+            let confidenceClass = 'confidence-' + data.confidence.toLowerCase();
+            let decisionClass = 'decision-proceed';
+            
+            if (data.decision_type.includes('Abort')) {
+                decisionClass = 'decision-abort';
+            } else if (data.decision_type.includes('Deadlock')) {
+                decisionClass = 'decision-deadlock';
+            }
+
+            let breakdownHtml = '';
+            if (data.framework_breakdown) {
+                breakdownHtml = '<div class="framework-breakdown"><h4>Framework Analysis:</h4>';
+                for (const [framework, analysis] of Object.entries(data.framework_breakdown)) {
+                    const color = getFrameworkColor(framework);
+                    breakdownHtml += `
+                        <div class="breakdown-item" style="border-left-color: ${color};">
+                            <div class="breakdown-influence">${analysis.framework_info.name}: ${(analysis.influence).toFixed(1)}% influence</div>
+                            <div class="breakdown-arguments">
+                                <div class="argument-pro"><strong>Pro:</strong> ${analysis.pro_argument}</div>
+                                <div class="argument-con"><strong>Con:</strong> ${analysis.con_argument}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                breakdownHtml += '</div>';
+            }
+
+            const html = `
+                <div class="decision-header">
+                    <div class="decision-title">Ethical Analysis Result</div>
+                    <div class="confidence-badge ${confidenceClass}">${data.confidence} Confidence</div>
+                </div>
+                <div class="decision-text ${decisionClass}">${data.decision}</div>
+                <div class="reasoning">${data.reasoning}</div>
+                ${breakdownHtml}
+            `;
+
+            $('#decisionOutput').html(html);
+        }
+
+        function loadDilemma() {
+            const selectedDilemma = $('#dilemmaSelect').val();
+            window.location.href = `/dilemma/${selectedDilemma}`;
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('frameworkChart').getContext('2d');
+            frameworkChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for framework_data in frameworks.values() %}'{{ framework_data.name }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for framework_key in frameworks.keys() %}{{ weights[framework_key] }},{% endfor %}],
+                        backgroundColor: [{% for framework_data in frameworks.values() %}'{{ framework_data.color }}',{% endfor %}],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Ethical Framework Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(weights) {
+            if (frameworkChart) {
+                const values = Object.values(weights);
+                frameworkChart.data.datasets[0].data = values;
+                frameworkChart.update();
+            }
+        }
+    </script>
+</body>
+</html>

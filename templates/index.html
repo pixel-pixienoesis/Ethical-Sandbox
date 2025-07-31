@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ethical Decision Framework | Research Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0f766e;
+            --secondary-color: #fbb6ce;
+            --accent-color: #0d9488;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --light-bg: #fef7f7;
+            --card-shadow: 0 8px 32px rgba(15, 118, 110, 0.15);
+            --soft-pink: #fdf2f8;
+            --medium-pink: #fce7f3;
+            --dark-pink: #831843;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-pink);
+            background: linear-gradient(135deg, #fef7f7 0%, #fdf2f8 50%, #fce7f3 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .lab-branding {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lab-logo {
+            font-size: 3em;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .lab-info h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .lab-credentials {
+            font-size: 0.85em;
+            opacity: 0.9;
+            font-weight: 500;
+            margin-top: 5px;
+            padding: 5px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .research-nav {
+            background: var(--soft-pink);
+            padding: 12px 25px;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: var(--dark-pink);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: white;
+            border: 1px solid var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.1);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+        }
+
+        .main-content {
+            padding: 25px;
+        }
+
+        .content-tabs {
+            display: flex;
+            background: var(--soft-pink);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 25px;
+            gap: 6px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--dark-pink);
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(214, 51, 132, 0.15);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 25px;
+        }
+
+        .dilemma-section {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .dilemma-selector {
+            margin-bottom: 15px;
+        }
+
+        .dilemma-selector select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: var(--dark-pink);
+        }
+
+        .dilemma-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .dilemma-content .category {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .scenario {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.08);
+        }
+
+        .stakeholders {
+            margin-top: 15px;
+        }
+
+        .stakeholders h4 {
+            color: var(--dark-pink);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .stakeholder-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .stakeholder {
+            background: var(--secondary-color);
+            color: var(--dark-pink);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .controls-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .framework-controls {
+            margin-bottom: 20px;
+        }
+
+        .framework-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--soft-pink);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+
+        .framework-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.1);
+        }
+
+        .framework-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .framework-header strong {
+            color: var(--primary-color);
+            font-size: 0.95em;
+        }
+
+        .weight-display {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .framework-description {
+            font-size: 0.85em;
+            color: var(--dark-pink);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .framework-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--secondary-color);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .framework-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3);
+        }
+
+        .framework-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .decision-result {
+            background: var(--soft-pink);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .decision-result h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .confidence-level {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .analysis-results {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--secondary-color);
+            min-height: 400px;
+        }
+        .framework-header {
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .framework-name {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .framework-weight {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .framework-description {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            font-style: italic;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #ddd;
+        }
+
+        .slider-container {
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .decision-output {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        /* Summary Panel Styles */
+        .summary-panel {
+            padding: 10px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--soft-pink) 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(15, 118, 110, 0.15);
+            border: 2px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .summary-header h4 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .pulse-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .decision-badge {
+            background: linear-gradient(135deg, var(--primary-color), #0d9488);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            font-size: 0.95em;
+        }
+
+        .confidence-meter {
+            margin-bottom: 15px;
+        }
+
+        .confidence-label {
+            font-size: 0.85em;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .confidence-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .confidence-fill {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .confidence-text {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .key-reasoning {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .key-reasoning strong {
+            color: var(--primary-color);
+            font-size: 0.85em;
+        }
+
+        .key-reasoning p {
+            margin: 5px 0 0 0;
+            font-size: 0.8em;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        .primary-action {
+            background: linear-gradient(135deg, var(--primary-color), #0d9488);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .action-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-text {
+            font-size: 1em;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .methodology-indicator {
+            text-align: center;
+            margin-top: 15px;
+            padding: 8px;
+            background: rgba(15, 118, 110, 0.08);
+            border-radius: 8px;
+            border: 1px dashed var(--primary-color);
+        }
+
+        .methodology-indicator small {
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.75em;
+        }
+
+        .scroll-indicator {
+            text-align: center;
+            padding-top: 10px;
+            border-top: 1px dashed var(--secondary-color);
+        }
+
+        .scroll-arrow {
+            font-size: 1.2em;
+            color: var(--secondary-color);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-3px); }
+            60% { transform: translateY(-2px); }
+        }
+
+        .scroll-text {
+            font-size: 0.75em;
+            color: var(--primary-color);
+            margin-top: 3px;
+            font-style: italic;
+        }
+        .decision-output {
+            margin-top: 20px;
+            border-left: 5px solid var(--success-color);
+        }
+
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .decision-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .confidence-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .confidence-high { background: var(--success-color); color: white; }
+        .confidence-medium { background: var(--warning-color); color: white; }
+        .confidence-low { background: var(--accent-color); color: white; }
+
+        .decision-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .decision-proceed { background: #d5f4e6; color: #27ae60; }
+        .decision-abort { background: #fadbd8; color: #e74c3c; }
+        .decision-deadlock { background: #fef9e7; color: #f39c12; }
+
+        .reasoning {
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .framework-breakdown {
+            margin-top: 20px;
+        }
+
+        .creative-solutions {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .creative-solutions h4 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .solution-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border-left: 3px solid;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .controversial-solution {
+            position: relative;
+        }
+
+        .controversial-solution::before {
+            content: "⚠️ RESEARCH ONLY";
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        .ethical-concerns {
+            margin-top: 10px;
+            padding: 8px;
+            background: #fff0f0;
+            border-left: 3px solid #e74c3c;
+            font-size: 0.9em;
+            color: #c0392b;
+        }
+
+        .final-recommendation {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .final-recommendation::before {
+            content: "🔬 AI FINAL RECOMMENDATION";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .recommendation-outcome {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .scientific-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #34495e;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+
+        .probability-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .priority-controls {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-radius: 10px;
+            border: 2px solid #f57c00;
+        }
+
+        .priority-controls h3 {
+            color: #e65100;
+            margin-bottom: 15px;
+        }
+
+        .priority-item {
+            background: linear-gradient(135deg, #ffffff 0%, #fff3e0 100%);
+            border-left: 4px solid #ff9800;
+        }
+
+        .priority-description {
+            background: #fff8e1;
+            border-left-color: #ff9800;
+            color: #bf360c;
+            font-weight: 500;
+        }
+
+        .priority-slider {
+            background: linear-gradient(to right, #ffcc80 0%, #ff9800 100%);
+        }
+
+        .priority-slider::-webkit-slider-thumb {
+            background: #ff6f00;
+            border: 2px solid #e65100;
+        }
+
+        .priority-slider::-moz-range-thumb {
+            background: #ff6f00;
+            border: 2px solid #e65100;
+        }
+
+        .solution-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .solution-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .solution-score {
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .score-high { background: var(--success-color); }
+        .score-medium { background: var(--warning-color); }
+        .score-low { background: var(--accent-color); }
+
+        .solution-description {
+            color: #555;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .solution-metrics {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .complexity-analysis {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .complexity-analysis h5 {
+            color: var(--warning-color);
+            margin-bottom: 10px;
+        }
+
+        .breakdown-item {
+            background: var(--light-bg);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 3px solid;
+        }
+
+        .breakdown-influence {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-arguments {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 0.95em;
+        }
+
+        .argument-pro {
+            color: var(--success-color);
+        }
+
+        .argument-con {
+            color: var(--accent-color);
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+            position: relative;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .breakdown-arguments {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-note {
+            background: linear-gradient(135deg, #fef7f7 0%, var(--soft-pink) 100%);
+            padding: 20px 25px;
+            margin: 0;
+            color: var(--dark-pink);
+            font-size: 0.9em;
+            border-bottom: 1px solid var(--secondary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .lab-notice {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .methodology-note {
+            text-align: center;
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .citation {
+            display: block;
+            font-style: italic;
+            font-size: 0.85em;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .research-note strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="lab-branding">
+                <div class="lab-logo">🧠</div>
+                <div class="lab-info">
+                    <h1>Noesis Ethical AI Laboratory</h1>
+                    <p class="subtitle">Advanced Multi-Framework Ethical Analysis for Autonomous Systems</p>
+                    <div class="lab-credentials">Research Platform v2.1 | ISO 27001 Compliant | Peer-Reviewed Methodology</div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="research-nav">
+            <div class="nav-links">
+                <a href="#scenario-section" class="nav-link">🎯 Scenario Analysis</a>
+                <a href="#" onclick="exportSessionData()" class="nav-link">📊 Export Research Data</a>
+                <a href="#" onclick="generateReport()" class="nav-link">📋 Technical Report</a>
+                <a href="#" onclick="generatePaper()" class="nav-link">📄 Academic Publication</a>
+                <a href="/research_dashboard" class="nav-link">📈 Lab Analytics</a>
+            </div>
+        </nav>
+
+        <div class="research-note">
+            <div class="lab-notice">
+                <strong>🧪 Noesis Laboratory Research Platform</strong> | Ethical AI Decision Framework v2.1
+            </div>
+            <div class="methodology-note">
+                This platform implements peer-reviewed multi-framework ethical analysis methodology. 
+                All data collection follows IRB protocols and contributes to advancing AI safety research.
+                <span class="citation">Methodology validated through academic publication pipeline.</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="content-tabs">
+                <button class="tab-button active" onclick="switchTab('scenario-tab')">📋 Scenario</button>
+                <button class="tab-button" onclick="switchTab('quick-tab')">⚡ Quick Analysis</button>
+                <button class="tab-button" onclick="switchTab('ethics-tab')">🧠 Ethics</button>
+                <button class="tab-button" onclick="switchTab('priority-tab')">💼 Priorities</button>
+                <button class="tab-button" onclick="switchTab('analysis-tab')">📊 Analysis</button>
+                <button class="tab-button" onclick="switchTab('custom-tab')">✏️ Create Custom</button>
+            </div>
+
+            <div id="scenario-tab" class="tab-content active">
+                <div class="section-grid">
+                    <div class="dilemma-section" id="scenario-section">
+                        <div class="dilemma-selector">
+                            <select id="dilemmaSelect" onchange="loadDilemma()">
+                                {% for key, dilemma_data in available_dilemmas.items() %}
+                                <option value="{{ key }}" {% if key == dilemma_key %}selected{% endif %}>
+                                    {{ dilemma_data.title }} ({{ dilemma_data.category }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="dilemma-content">
+                            <h2>{{ dilemma.title }}</h2>
+                            <span class="category">{{ dilemma.category }}</span>
+                            
+                            <div class="scenario">
+                                {{ dilemma.scenario }}
+                            </div>
+
+                            <div class="stakeholders">
+                                <h4>Key Stakeholders:</h4>
+                                <div class="stakeholder-list">
+                                    {% for stakeholder in dilemma.stakeholders %}
+                                    <span class="stakeholder">{{ stakeholder }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls-section">
+                        <h3>Quick Analysis</h3>
+                        <p style="font-size: 0.9em; color: var(--dark-pink); margin-bottom: 15px;">
+                            Use the tabs above to adjust ethical frameworks and priorities, then return here to see the AI's decision.
+                        </p>
+                        <div id="decision-display">
+                            <div class="decision-result">
+                                <h4>{{ decision_data.decision }}</h4>
+                                <p>{{ decision_data.reasoning[:200] }}...</p>
+                                <div class="confidence-level">
+                                    Confidence: {{ decision_data.confidence }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ethics-tab" class="tab-content">
+                <div class="ethics-layout" style="display: flex; gap: 30px; max-width: 1200px; margin: 0 auto;">
+                    <!-- Controls Section -->
+                    <div class="controls-section" style="flex: 1; min-width: 600px;">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">🧠 Ethical Framework Controls</h3>
+                        <p style="text-align: center; margin-bottom: 25px; color: var(--dark-pink);">
+                            Adjust these sliders to set how much weight the AI should give to each ethical perspective.
+                        </p>
+                        
+                        <div class="ethical-frameworks">
+                            {% for framework_key, framework_data in ethical_frameworks.items() %}
+                            <div class="framework-item">
+                                <div class="framework-header">
+                                    <strong>{{ framework_data.name }}</strong>
+                                    <span class="weight-display" id="weight-{{ framework_key }}">20%</span>
+                                </div>
+                                <p class="framework-description">{{ framework_data.description }}</p>
+                                <input type="range" id="slider-{{ framework_key }}" class="framework-slider" 
+                                       data-framework="{{ framework_key }}" min="0" max="1" step="0.01" value="0.2" 
+                                       oninput="updateAnalysis()">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Live Summary Panel -->
+                    <div class="summary-panel" style="flex: 0 0 350px; position: sticky; top: 20px; height: fit-content;">
+                        <div class="summary-card">
+                            <div class="summary-header">
+                                <h4>🎯 AI Decision Summary</h4>
+                                <div class="pulse-indicator"></div>
+                            </div>
+                            
+                            <div class="current-decision" id="live-decision">
+                                <div class="primary-action" id="primary-action">
+                                    <div class="action-label">Primary Recommended Action</div>
+                                    <div class="action-text" id="action-text">
+                                        {{ decision_data.decision if decision_data else "Analyzing scenario..." }}
+                                    </div>
+                                </div>
+
+                                <div class="decision-badge" id="decision-badge">
+                                    {{ decision_data.decision if decision_data else "Analyzing..." }}
+                                </div>
+                                
+                                <div class="confidence-meter">
+                                    <div class="confidence-label">Statistical Confidence</div>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" id="confidence-fill" style="width: {{ decision_data.confidence if decision_data else '50' }}%"></div>
+                                    </div>
+                                    <div class="confidence-text" id="confidence-text">{{ decision_data.confidence if decision_data else '50' }}%</div>
+                                </div>
+                                
+                                <div class="key-reasoning" id="key-reasoning">
+                                    <strong>Key Scientific Rationale:</strong>
+                                    <p>{{ decision_data.reasoning[:150] + '...' if decision_data else 'Adjust ethical framework weights to see real-time analysis updates.' }}</p>
+                                </div>
+
+                                <div class="methodology-indicator">
+                                    <small>🔬 Multi-framework analysis using peer-reviewed methodology</small>
+                                </div>
+                            </div>
+                            
+                            <div class="scroll-indicator">
+                                <div class="scroll-arrow">↓</div>
+                                <div class="scroll-text">Scroll to Analysis tab for detailed breakdown</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="priority-tab" class="tab-content">
+                <div class="controls-section" style="max-width: 800px; margin: 0 auto;">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">💼 Priority Framework Controls</h3>
+                    <p style="text-align: center; margin-bottom: 25px; color: var(--dark-pink);">
+                        These represent business/organizational priorities that might influence decision-making.
+                    </p>
+                    
+                    <div class="priority-frameworks">
+                        {% for framework_key, framework_data in priority_frameworks.items() %}
+                        <div class="framework-item">
+                            <div class="framework-header">
+                                <strong>{{ framework_data.name }}</strong>
+                                <span class="weight-display" id="weight-{{ framework_key }}">0%</span>
+                            </div>
+                            <p class="framework-description">{{ framework_data.description }}</p>
+                            <input type="range" id="slider-{{ framework_key }}" class="framework-slider" 
+                                   data-framework="{{ framework_key }}" min="0" max="1" step="0.01" value="0" 
+                                   oninput="updateAnalysis()">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-tab" class="tab-content">
+                <div class="section-grid">
+                    <div class="analysis-results">
+                        <div id="decision-output">
+                            <!-- Decision analysis will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="controls-section">
+                        <div class="chart-container">
+                            <canvas id="frameworkChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quick-tab" class="tab-content">
+                <div class="controls-section" style="max-width: 900px; margin: 0 auto;">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">⚡ Quick Ethical Analysis</h3>
+                    <p style="text-align: center; margin-bottom: 25px; color: var(--dark-pink);">
+                        Type any scenario and get instant AI ethical analysis - no permanent storage needed!
+                    </p>
+                    <p style="text-align: center; margin-bottom: 25px; color: var(--accent-color); font-size: 0.9em;">
+                        Examples: "Should I have cheese or ham sandwich?" • "Is it ethical to use AI for hiring?" • "My neighbor's inheritance dilemma"
+                    </p>
+                    
+                    <div style="background: var(--soft-pink); padding: 25px; border-radius: 15px; margin-bottom: 25px;">
+                        <label for="quickScenario" style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--dark-pink);">
+                            Describe your ethical scenario:
+                        </label>
+                        <textarea 
+                            id="quickScenario" 
+                            placeholder="Type any ethical dilemma here... For example: 'I found my coworker's wallet with $200 cash. Should I return it to them or turn it in to HR?'"
+                            style="width: 100%; min-height: 120px; padding: 15px; border: 2px solid #e0e7ff; border-radius: 10px; font-size: 14px; resize: vertical; font-family: inherit;"
+                        ></textarea>
+                        
+                        <button 
+                            id="quickAnalyzeBtn"
+                            onclick="runQuickAnalysis()"
+                            style="width: 100%; padding: 15px; margin-top: 15px; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(15, 118, 110, 0.3)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                        >
+                            🧠 Analyze This Scenario
+                        </button>
+                    </div>
+
+                    <div id="quickResults" style="display: none; background: white; padding: 25px; border-radius: 15px; border: 2px solid var(--accent-color); margin-top: 20px;">
+                        <h4 style="color: var(--primary-color); margin-bottom: 15px;">AI Ethical Analysis Results:</h4>
+                        <div id="quickRecommendation" style="margin-bottom: 20px;"></div>
+                        <div id="quickCreativeSolutions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="custom-tab" class="tab-content">
+                <div class="controls-section" style="max-width: 900px; margin: 0 auto;">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">✏️ Create Custom Scenario</h3>
+                    <p style="text-align: center; margin-bottom: 25px; color: var(--dark-pink);">
+                        Design your own ethical dilemma to test the AI's decision-making frameworks.
+                    </p>
+                    
+                    <form id="customScenarioForm" style="display: grid; gap: 20px;">
+                        <div class="form-group">
+                            <label for="scenarioTitle" style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Scenario Title:</label>
+                            <input type="text" id="scenarioTitle" name="title" placeholder="e.g., The Autonomous Delivery Dilemma" 
+                                   style="width: 100%; padding: 10px; border: 2px solid var(--secondary-color); border-radius: 8px;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scenarioCategory" style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Category:</label>
+                            <select id="scenarioCategory" name="category" 
+                                    style="width: 100%; padding: 10px; border: 2px solid var(--secondary-color); border-radius: 8px;">
+                                <option value="AI Systems">AI Systems</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Business Ethics">Business Ethics</option>
+                                <option value="Environmental">Environmental</option>
+                                <option value="Privacy & Data">Privacy & Data</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scenarioDescription" style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Scenario Description:</label>
+                            <textarea id="scenarioDescription" name="scenario" rows="4" 
+                                      placeholder="Describe the ethical dilemma in detail. What situation does the AI face? What are the competing interests?"
+                                      style="width: 100%; padding: 10px; border: 2px solid var(--secondary-color); border-radius: 8px; resize: vertical;"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="scenarioStakeholders" style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Key Stakeholders (comma-separated):</label>
+                            <input type="text" id="scenarioStakeholders" name="stakeholders" 
+                                   placeholder="e.g., Customers, Employees, Environment, Shareholders"
+                                   style="width: 100%; padding: 10px; border: 2px solid var(--secondary-color); border-radius: 8px;">
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Option A:</label>
+                                <input type="text" id="optionATitle" name="option_a_title" placeholder="Option A Title"
+                                       style="width: 100%; padding: 8px; border: 2px solid var(--secondary-color); border-radius: 6px; margin-bottom: 8px;">
+                                <textarea id="optionADescription" name="option_a_description" rows="3" placeholder="Describe Option A"
+                                          style="width: 100%; padding: 8px; border: 2px solid var(--secondary-color); border-radius: 6px; resize: vertical;"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500; color: var(--primary-color);">Option B:</label>
+                                <input type="text" id="optionBTitle" name="option_b_title" placeholder="Option B Title"
+                                       style="width: 100%; padding: 8px; border: 2px solid var(--secondary-color); border-radius: 6px; margin-bottom: 8px;">
+                                <textarea id="optionBDescription" name="option_b_description" rows="3" placeholder="Describe Option B"
+                                          style="width: 100%; padding: 8px; border: 2px solid var(--secondary-color); border-radius: 6px; resize: vertical;"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button type="button" onclick="createCustomScenario()" 
+                                    style="background: var(--primary-color); color: white; padding: 12px 30px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 1em;">
+                                🚀 Create & Analyze Scenario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+                    <div class="category">{{ dilemma.category }}</div>
+                    <h2>{{ dilemma.title }}</h2>
+                    <div class="scenario">{{ dilemma.scenario }}</div>
+                    
+                    <div class="stakeholders">
+                        <h4>Key Stakeholders:</h4>
+                        <div class="stakeholder-list">
+                            {% for stakeholder in dilemma.stakeholders %}
+                            <span class="stakeholder">{{ stakeholder }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDilemma = '{{ dilemma_key }}';
+        let frameworkChart;
+
+        // Tab switching functionality
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Initialize chart if analysis tab is selected
+            if (tabId === 'analysis-tab' && !frameworkChart) {
+                setTimeout(initializeChart, 100);
+            }
+        }
+
+        // Quick Analysis for any text input
+        function runQuickAnalysis() {
+            const scenarioText = document.getElementById('quickScenario').value.trim();
+            
+            if (!scenarioText) {
+                alert('Please enter a scenario to analyze!');
+                return;
+            }
+
+            // Show loading state
+            const btn = document.getElementById('quickAnalyzeBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🤔 Analyzing...';
+            btn.disabled = true;
+
+            // Get current ethical framework weights
+            const weights = {};
+            {% for framework_key in ethical_frameworks.keys() %}
+            weights['{{ framework_key }}'] = parseFloat($('#slider-{{ framework_key }}').val()) || 0.2;
+            {% endfor %}
+            {% for framework_key in priority_frameworks.keys() %}
+            weights['{{ framework_key }}'] = parseFloat($('#slider-{{ framework_key }}').val()) || 0.0;
+            {% endfor %}
+
+            $.ajax({
+                url: '/quick_analyze',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    scenario_text: scenarioText,
+                    weights: weights
+                }),
+                success: function(response) {
+                    displayQuickResults(response);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                },
+                error: function() {
+                    alert('Error analyzing scenario. Please try again.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        function displayQuickResults(response) {
+            const resultsDiv = document.getElementById('quickResults');
+            const recommendationDiv = document.getElementById('quickRecommendation');
+            const solutionsDiv = document.getElementById('quickCreativeSolutions');
+
+            // Show results
+            resultsDiv.style.display = 'block';
+
+            // Display main recommendation with concrete answer
+            let recommendationHTML = `
+                <div style="background: var(--soft-pink); padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary-color);">
+                    <h5 style="color: var(--primary-color); margin-bottom: 10px; font-size: 1.1em;">${response.recommendation.decision}</h5>
+                    <p style="margin-bottom: 15px; font-weight: 500;">${response.recommendation.reasoning}</p>
+            `;
+
+            // Add concrete action if available
+            if (response.recommendation.concrete_action) {
+                recommendationHTML += `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-color);">
+                        <strong style="color: var(--accent-color);">🎯 Specific Action:</strong>
+                        <p style="margin-top: 5px;">${response.recommendation.concrete_action}</p>
+                    </div>
+                `;
+            }
+
+            // Add ethical justification if available
+            if (response.recommendation.why_this_choice) {
+                recommendationHTML += `
+                    <div style="background: rgba(15, 118, 110, 0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <strong style="color: var(--primary-color);">💡 Why This Choice:</strong>
+                        <p style="margin-top: 5px;">${response.recommendation.why_this_choice}</p>
+                    </div>
+                `;
+            }
+
+            recommendationHTML += `
+                    <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
+                        <div style="display: inline-block; background: var(--accent-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em;">
+                            Confidence: ${response.recommendation.confidence}
+                        </div>
+                        <div style="display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em;">
+                            Framework: ${response.recommendation.approach}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            recommendationDiv.innerHTML = recommendationHTML;
+
+            // Display creative solutions if any
+            if (response.creative_solutions && response.creative_solutions.length > 0) {
+                let solutionsHTML = '<h5 style="color: var(--primary-color); margin-bottom: 15px;">🎯 Creative Ethical Solutions:</h5>';
+                
+                response.creative_solutions.forEach((solution, index) => {
+                    solutionsHTML += `
+                        <div style="background: white; border: 2px solid var(--medium-pink); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                            <h6 style="color: var(--dark-pink); margin-bottom: 8px;">${solution.solution.title}</h6>
+                            <p style="margin-bottom: 10px; font-size: 0.9em;">${solution.solution.description}</p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--success-color); color: white; padding: 3px 8px; border-radius: 15px; font-size: 0.8em;">
+                                    Ethics: ${(solution.ethics_score * 100).toFixed(0)}%
+                                </span>
+                                <span style="background: var(--warning-color); color: white; padding: 3px 8px; border-radius: 15px; font-size: 0.8em;">
+                                    Innovation: ${(solution.solution.innovation_score * 100).toFixed(0)}%
+                                </span>
+                                <span style="background: var(--accent-color); color: white; padding: 3px 8px; border-radius: 15px; font-size: 0.8em;">
+                                    ${solution.recommendation_strength}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                solutionsDiv.innerHTML = solutionsHTML;
+            } else {
+                solutionsDiv.innerHTML = `
+                    <div style="background: rgba(251, 182, 206, 0.3); padding: 15px; border-radius: 10px; text-align: center;">
+                        <p style="color: var(--dark-pink); font-style: italic; margin: 0;">
+                            💡 <strong>For Students:</strong> This gives you a clear answer! Try adjusting the ethical framework sliders above for different perspectives and more creative solutions.
+                        </p>
+                    </div>
+                `;
+            }
+
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Initialize
+        $(document).ready(function() {
+            updateAnalysis();
+            initializeChart();
+        });
+
+        function updateAnalysis() {
+            const weights = {};
+            {% for framework_key in ethical_frameworks.keys() %}
+            weights['{{ framework_key }}'] = parseFloat($('#slider-{{ framework_key }}').val());
+            $('#weight-{{ framework_key }}').text((weights['{{ framework_key }}'] * 100).toFixed(1) + '%');
+            {% endfor %}
+            {% for framework_key in priority_frameworks.keys() %}
+            weights['{{ framework_key }}'] = parseFloat($('#slider-{{ framework_key }}').val());
+            $('#weight-{{ framework_key }}').text((weights['{{ framework_key }}'] * 100).toFixed(1) + '%');
+            {% endfor %}
+
+            updateChart(weights);
+
+            $.ajax({
+                url: '/analyze',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    dilemma: currentDilemma,
+                    weights: weights
+                }),
+                success: function(response) {
+                    displayDecision(response.decision_data);
+                },
+                error: function() {
+                    $('#decisionOutput').html('<div class="loading">Error analyzing decision. Please try again.</div>');
+                }
+            });
+        }
+
+        function displayDecision(data) {
+            // Update live summary panel
+            updateLiveSummary(data);
+            
+            let confidenceClass = 'confidence-' + data.confidence.toLowerCase();
+            let decisionClass = 'decision-proceed';
+            
+            if (data.decision_type.includes('Abort')) {
+                decisionClass = 'decision-abort';
+            } else if (data.decision_type.includes('Deadlock') || data.decision_type.includes('Complex')) {
+                decisionClass = 'decision-deadlock';
+            }
+
+            let breakdownHtml = '';
+            if (data.framework_breakdown) {
+                breakdownHtml = '<div class="framework-breakdown"><h4>Framework Analysis:</h4>';
+                for (const [framework, analysis] of Object.entries(data.framework_breakdown)) {
+                    breakdownHtml += `
+                        <div class="breakdown-item">
+                            <div class="breakdown-influence">${analysis.framework_info.name}: ${(analysis.influence).toFixed(1)}% influence</div>
+                            <div class="breakdown-arguments">
+                                <div class="argument-pro"><strong>Pro:</strong> ${analysis.pro_argument}</div>
+                                <div class="argument-con"><strong>Con:</strong> ${analysis.con_argument}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                breakdownHtml += '</div>';
+            }
+
+            // Creative Solutions Display
+            let creativeSolutionsHtml = '';
+            if (data.creative_solutions && data.creative_solutions.length > 0) {
+                // Separate ethical and controversial solutions
+                const ethicalSolutions = data.creative_solutions.filter(s => !s.is_controversial);
+                const controversialSolutions = data.creative_solutions.filter(s => s.is_controversial);
+                
+                creativeSolutionsHtml = '<div class="creative-solutions">';
+                
+                // Display ethical alternatives
+                if (ethicalSolutions.length > 0) {
+                    creativeSolutionsHtml += '<h4>🧠 AI-Generated Creative Alternatives:</h4>';
+                    ethicalSolutions.forEach((solution, index) => {
+                        const scoreClass = solution.final_score > 0.7 ? 'score-high' : 
+                                         solution.final_score > 0.5 ? 'score-medium' : 'score-low';
+                        
+                        creativeSolutionsHtml += `
+                            <div class="solution-item" style="border-left-color: ${index === 0 ? '#27ae60' : index === 1 ? '#f39c12' : '#3498db'};">
+                                <div class="solution-header">
+                                    <div class="solution-title">${solution.solution.title}</div>
+                                    <div class="solution-score ${scoreClass}">${solution.recommendation_strength}</div>
+                                </div>
+                                <div class="solution-description">${solution.solution.description}</div>
+                                <div class="solution-metrics">
+                                    <span><strong>Ethics Score:</strong> ${(solution.ethics_score * 100).toFixed(0)}%</span>
+                                    <span><strong>Feasibility:</strong> ${(solution.solution.feasibility * 100).toFixed(0)}%</span>
+                                    <span><strong>Innovation:</strong> ${(solution.solution.innovation_score * 100).toFixed(0)}%</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                // Display controversial alternatives for research
+                if (controversialSolutions.length > 0) {
+                    creativeSolutionsHtml += '<h4 style="color: #e74c3c; margin-top: 25px;">⚠️ Controversial Alternatives (Research Analysis Only):</h4>';
+                    creativeSolutionsHtml += '<p style="font-size: 0.9em; color: #666; margin-bottom: 15px; font-style: italic;">These alternatives explore the full spectrum of AI decision-making, including ethically problematic choices that demonstrate why ethical frameworks are essential.</p>';
+                    
+                    controversialSolutions.forEach((solution, index) => {
+                        creativeSolutionsHtml += `
+                            <div class="solution-item controversial-solution" style="border-left-color: #e74c3c; background: #fff5f5;">
+                                <div class="solution-header">
+                                    <div class="solution-title">${solution.solution.title}</div>
+                                    <div class="solution-score score-low">⚠️ ${solution.recommendation_strength}</div>
+                                </div>
+                                <div class="solution-description">${solution.solution.description}</div>
+                                <div class="solution-metrics">
+                                    <span><strong>Ethics Score:</strong> ${(solution.ethics_score * 100).toFixed(0)}%</span>
+                                    <span><strong>Feasibility:</strong> ${(solution.solution.feasibility * 100).toFixed(0)}%</span>
+                                    <span><strong>Innovation:</strong> ${(solution.solution.innovation_score * 100).toFixed(0)}%</span>
+                                </div>
+                                ${solution.solution.ethical_concerns ? `
+                                    <div class="ethical-concerns">
+                                        <strong>Ethical Concerns:</strong> ${solution.solution.ethical_concerns.join(', ')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                }
+                
+                creativeSolutionsHtml += '</div>';
+            }
+
+            // Complexity Analysis Display
+            let complexityHtml = '';
+            if (data.complexity_analysis) {
+                complexityHtml = `
+                    <div class="complexity-analysis">
+                        <h5>🔬 Problem Complexity Analysis</h5>
+                        <p><strong>Complexity Level:</strong> ${data.complexity_analysis.complexity_level} 
+                           (Score: ${(data.complexity_analysis.complexity_score * 100).toFixed(0)}%)</p>
+                        <p><strong>Framework Tension:</strong> ${data.complexity_analysis.framework_tension}</p>
+                        <p><strong>Reasoning Depth:</strong> ${data.complexity_analysis.reasoning_depth_required}</p>
+                    </div>
+                `;
+            }
+
+            // Final AI Recommendation Display
+            let finalRecommendationHtml = '';
+            if (data.final_recommendation) {
+                const recommendation = data.final_recommendation;
+                const outcome = recommendation.most_likely_outcome;
+                
+                finalRecommendationHtml = `
+                    <div class="final-recommendation">
+                        <div class="recommendation-outcome">
+                            Most Likely Outcome: ${outcome.action}
+                        </div>
+                        <div style="margin-bottom: 15px; color: #666; font-size: 0.95em;">
+                            <strong>Probability:</strong> ${outcome.probability.toFixed(0)}% (${outcome.confidence_interval})
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${outcome.probability}%"></div>
+                        </div>
+                        
+                        <div class="scientific-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Scientific Reasoning</div>
+                                <div class="detail-value">${recommendation.scientific_reasoning}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Framework Analysis</div>
+                                <div class="detail-value">${recommendation.framework_analysis}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Risk Assessment</div>
+                                <div class="detail-value">${recommendation.risk_assessment}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Methodology</div>
+                                <div class="detail-value">${recommendation.methodology}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.9em; color: #666;">
+                            <strong>Statistical Confidence:</strong> ${recommendation.statistical_confidence} | 
+                            <strong>Decision Certainty:</strong> ${recommendation.decision_certainty}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const html = `
+                <div class="decision-header">
+                    <div class="decision-title">Advanced AI Ethical Analysis</div>
+                    <div class="confidence-badge ${confidenceClass}">${data.confidence} Confidence</div>
+                </div>
+                <div class="decision-text ${decisionClass}">${data.decision}</div>
+                <div class="reasoning">${data.reasoning}</div>
+                ${finalRecommendationHtml}
+                ${creativeSolutionsHtml}
+                ${complexityHtml}
+                ${breakdownHtml}
+            `;
+
+            $('#decisionOutput').html(html);
+        }
+
+        function updateLiveSummary(data) {
+            // Update primary action text with the actual decision
+            const actionText = document.getElementById('action-text');
+            if (actionText) {
+                // Use the full decision text which now contains concrete actions
+                actionText.textContent = data.decision;
+            }
+            
+            // Update decision badge with decision type
+            const decisionBadge = document.getElementById('decision-badge');
+            if (decisionBadge) {
+                decisionBadge.textContent = data.decision_type || data.decision;
+            }
+            
+            // Update confidence meter
+            const confidenceFill = document.getElementById('confidence-fill');
+            const confidenceText = document.getElementById('confidence-text');
+            if (confidenceFill && confidenceText) {
+                const confidenceNum = parseInt(data.confidence.replace('%', ''));
+                confidenceFill.style.width = confidenceNum + '%';
+                confidenceText.textContent = data.confidence;
+            }
+            
+            // Update key reasoning
+            const keyReasoning = document.getElementById('key-reasoning');
+            if (keyReasoning) {
+                const reasoningText = data.reasoning.length > 150 ? 
+                    data.reasoning.substring(0, 150) + '...' : data.reasoning;
+                keyReasoning.innerHTML = `
+                    <strong>Key Scientific Rationale:</strong>
+                    <p>${reasoningText}</p>
+                `;
+            }
+        }
+
+        function loadDilemma() {
+            const selectedDilemma = $('#dilemmaSelect').val();
+            window.location.href = `/dilemma/${selectedDilemma}`;
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('frameworkChart').getContext('2d');
+            frameworkChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        {% for framework_data in ethical_frameworks.values() %}'{{ framework_data.name }}',{% endfor %}
+                        {% for framework_data in priority_frameworks.values() %}'{{ framework_data.name }}',{% endfor %}
+                    ],
+                    datasets: [{
+                        data: [
+                            {% for framework_key in ethical_frameworks.keys() %}{{ weights[framework_key] }},{% endfor %}
+                            {% for framework_key in priority_frameworks.keys() %}{{ weights[framework_key] }},{% endfor %}
+                        ],
+                        backgroundColor: [
+                            {% for framework_data in ethical_frameworks.values() %}'{{ framework_data.color }}',{% endfor %}
+                            {% for framework_data in priority_frameworks.values() %}'{{ framework_data.color }}',{% endfor %}
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Ethical Framework Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(weights) {
+            if (frameworkChart) {
+                const values = Object.values(weights);
+                frameworkChart.data.datasets[0].data = values;
+                frameworkChart.update();
+            }
+        }
+
+        // Navigation functions for research exports
+        function exportSessionData() {
+            // Get current framework weights
+            const ethicalWeights = {};
+            const priorityWeights = {};
+            
+            document.querySelectorAll('.ethical-frameworks .framework-slider').forEach(slider => {
+                ethicalWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+            
+            document.querySelectorAll('.priority-frameworks .framework-slider').forEach(slider => {
+                priorityWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+
+            // Create export request
+            const exportData = {
+                ethical_weights: ethicalWeights,
+                priority_weights: priorityWeights,
+                scenario: document.getElementById('dilemma').value || 'custom',
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to backend for processing
+            fetch('/export_session_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(exportData)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'ethical_session_data.json';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Export failed:', error);
+                alert('Export failed. Please try again.');
+            });
+        }
+
+        function generateReport() {
+            // Similar to exportSessionData but for research report
+            const ethicalWeights = {};
+            const priorityWeights = {};
+            
+            document.querySelectorAll('.ethical-frameworks .framework-slider').forEach(slider => {
+                ethicalWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+            
+            document.querySelectorAll('.priority-frameworks .framework-slider').forEach(slider => {
+                priorityWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+
+            const reportData = {
+                ethical_weights: ethicalWeights,
+                priority_weights: priorityWeights,
+                scenario: document.getElementById('dilemma').value || 'custom',
+                timestamp: new Date().toISOString()
+            };
+
+            fetch('/generate_research_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reportData)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'ethical_analysis_report.html';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Report generation failed:', error);
+                alert('Report generation failed. Please try again.');
+            });
+        }
+
+        function generatePaper() {
+            // Show loading state
+            const originalText = event.target.textContent;
+            event.target.textContent = '⏳ Generating...';
+            event.target.disabled = true;
+            
+            // Generate academic paper
+            const ethicalWeights = {};
+            const priorityWeights = {};
+            
+            // Get ethical framework weights
+            document.querySelectorAll('.ethical-frameworks .framework-slider').forEach(slider => {
+                ethicalWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+            
+            // Get priority framework weights  
+            document.querySelectorAll('.priority-frameworks .framework-slider').forEach(slider => {
+                priorityWeights[slider.dataset.framework] = parseFloat(slider.value);
+            });
+
+            // Get current scenario
+            const dilemmaSelect = document.getElementById('dilemmaSelect');
+            const currentScenario = dilemmaSelect ? dilemmaSelect.value : 'power_grid';
+
+            const paperData = {
+                ethical_weights: ethicalWeights,
+                priority_weights: priorityWeights,
+                scenario: currentScenario,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Generating paper with data:', paperData); // Debug log
+
+            fetch('/generate_academic_paper', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(paperData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `ethical_analysis_paper_${new Date().toISOString().split('T')[0]}.tex`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                // Show success notification
+                alert('✅ Academic paper generated and downloaded successfully!');
+            })
+            .catch(error => {
+                console.error('Error generating paper:', error);
+                alert('❌ Error generating academic paper. Please check your browser console for details.');
+            });
+        }
+
+        function createCustomScenario() {
+            const form = document.getElementById('customScenarioForm');
+            const formData = new FormData(form);
+            
+            // Convert stakeholders to array
+            const stakeholders = formData.get('stakeholders').split(',').map(s => s.trim()).filter(s => s);
+            
+            const scenarioData = {
+                title: formData.get('title'),
+                category: formData.get('category'),
+                scenario: formData.get('scenario'),
+                stakeholders: stakeholders,
+                option_a_title: formData.get('option_a_title'),
+                option_a_description: formData.get('option_a_description'),
+                option_b_title: formData.get('option_b_title'),
+                option_b_description: formData.get('option_b_description')
+            };
+            
+            // Validate required fields
+            if (!scenarioData.title || !scenarioData.scenario || !scenarioData.option_a_title || !scenarioData.option_b_title) {
+                alert('Please fill in all required fields (Title, Scenario, and both Options).');
+                return;
+            }
+            
+            // Send to backend
+            fetch('/create_scenario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(scenarioData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Custom scenario created successfully! Redirecting to analyze it...');
+                    window.location.href = `/dilemma/${data.scenario_id}`;
+                } else {
+                    alert('❌ Failed to create scenario. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating scenario:', error);
+                alert('❌ Error creating scenario. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
